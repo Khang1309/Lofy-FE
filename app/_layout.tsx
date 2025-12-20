@@ -10,8 +10,6 @@ Sentry.init({
   // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
   sendDefaultPii: true,
 
-  // Enable Logs
-  enableLogs: true,
 
   // Configure Session Replay
   replaysSessionSampleRate: 0.1,
@@ -32,6 +30,8 @@ export default Sentry.wrap(function RootLayout() {
 
         {/* Tabs (no header, you control header there) */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+        <Stack.Screen name="index" options={{ headerShown: false }} />
 
         {/* Notification: has its own header + BACK automatically */}
         <Stack.Screen

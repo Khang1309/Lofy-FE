@@ -112,7 +112,9 @@ export default function LoginScreen() {
 
       const { access_token } = response;
 
-      if (access_token) {
+
+
+      if (access_token && typeof access_token !== 'string') {
         // Lưu token
         await SecureStore.setItemAsync('auth_token', access_token);
         await SecureStore.setItemAsync('user_email', email);
@@ -120,6 +122,7 @@ export default function LoginScreen() {
         setIsLoading(false);
         router.replace('/');
       } else {
+        setIsLoading(false);
         throw { message: 'Không nhận được token từ server' };
       }
 

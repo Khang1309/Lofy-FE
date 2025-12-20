@@ -43,7 +43,9 @@
     },
     "plugins": [
       "expo-font",
-      "expo-router"
+      "expo-router",
+      "@sentry/react-native",
+      "@react-native-community/datetimepicker"
     ]
   }
 }

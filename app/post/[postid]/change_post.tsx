@@ -104,6 +104,9 @@ export default function EditPostPage() {
     const [date, setDate] = useState<Date>(
         found_atP ? new Date(found_atP) : new Date()
     );
+    const [show, setShow] = useState(false);
+    const [mode, setMode] = useState<'date' | 'time'>('date');
+
     const [description, setDescription] = useState(post_descriptionP);
     const [imageUri, setImageUri] = useState<string>(imageP)
 
@@ -112,6 +115,40 @@ export default function EditPostPage() {
 
     const [openBuilding, setOpenBuilding] = useState(false);
     const [openFloor, setOpenFloor] = useState(false);
+
+
+    const onChange = (event: any, selectedDate?: Date) => {
+        if (!event) return;
+        if (event.type === 'dismissed') {
+            setShow(false);
+            setMode('date');
+            return;
+        }
+
+        if (selectedDate) {
+            setDate(selectedDate);
+        }
+
+        if (Platform.OS === 'android') {
+            setShow(false);
+
+            if (mode === 'date') {
+                // ⏱️ delay is important
+                setTimeout(() => {
+                    setMode('time');
+                    setShow(true);
+                }, 100);
+            } else {
+                setMode('date');
+            }
+        }
+    };
+
+
+    const showDatepicker = () => {
+        setMode('date');
+        setShow(true);
+    };
 
     const handlePickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -133,6 +170,23 @@ export default function EditPostPage() {
     };
 
     const handleSubmit = async () => {
+
+        if (!imageUri) {
+            Alert.alert(
+                'Thiếu hình ảnh',
+                'Vui lòng chọn ít nhất một hình ảnh.'
+            );
+            return;
+        }
+
+        if (!date) {
+            Alert.alert(
+                'Thiếu thời gian',
+                'Vui lòng chọn thời gian tìm thấy đồ.'
+            );
+            return;
+        }
+
         if (!title.trim() || !building.trim() || !floor.trim() || !room.trim()) {
             Alert.alert('Thiếu thông tin', 'Vui lòng điền đầy đủ các trường bắt buộc.');
             return;
@@ -275,15 +329,33 @@ export default function EditPostPage() {
                     <View style={styles.fieldGroup}>
                         <Text style={styles.label}>Thời gian tìm thấy *</Text>
 
-                        <DateTimePicker
-                            value={date}
-                            mode="datetime"
-                            display="default"
-                            onChange={(event, selectedDate) => {
-                                if (selectedDate) setDate(selectedDate);
-                                setIsChange(true)
+                        <TouchableOpacity
+                            onPress={showDatepicker}
+                            style={{
+                                borderWidth: 1,
+                                borderColor: '#ccc',
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: '#f9f9f9',
                             }}
-                        />
+                        >
+                            <Text style={{ fontSize: 16 }}>
+                                {/* Format date nicely: "20/12/2025 15:30" */}
+                                {date.toLocaleDateString('vi-VN')} - {date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                            </Text>
+                        </TouchableOpacity>
+
+                        {/* 2. The Picker (Only renders when 'show' is true) */}
+                        {show && (
+                            <DateTimePicker
+                                testID="dateTimePicker"
+                                value={date}
+                                mode={mode} // Dynamic: 'date' then 'time'
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChange}
+                            />
+                        )}
 
                     </View>
 
