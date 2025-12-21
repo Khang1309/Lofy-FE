@@ -1,6 +1,7 @@
 // app/_layout.tsx
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 // import * as Sentry from '@sentry/react-native';
 
 // Sentry.init({

@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { TouchableOpacity, View, useWindowDimensions, Pressable, Image } from 'react-native';
+import { View, Pressable, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useEffect } from 'react'

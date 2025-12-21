@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { View, ActivityIndicator } from 'react-native';
 import { useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
@@ -7,8 +7,6 @@ import * as Notifications from 'expo-notifications';
 import { jwtDecode } from "jwt-decode";
 import useUserStore from '../store/useUserStore';
 import api from './services/api';
-import Constants from 'expo-constants'; // Useful for simulator checks
-import { router } from 'expo-router'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

@@ -1,8 +1,6 @@
-import { headerTheme } from '@/styles/theme';
 import * as React from 'react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
-  Animated,
   View,
   TouchableOpacity,
   StyleSheet,
@@ -16,11 +14,10 @@ import {
 import { TabView, SceneMap, NavigationState, SceneRendererProps } from 'react-native-tab-view';
 import { Ionicons } from '@expo/vector-icons';
 import { Icon } from 'react-native-elements';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import api from '../services/api'
 import useUserStore from '../../store/useUserStore';
-import { statusColor } from '@/styles/theme';
-import { useFocusEffect } from "expo-router";
+import { statusColor, headerTheme } from '@/styles/theme';
 
 
 

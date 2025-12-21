@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react';
 import { router } from 'expo-router';
 import useUserStore from '../../store/useUserStore';
 import * as SecureStore from 'expo-secure-store';
-import * as Sentry from '@sentry/react-native';
+//import * as Sentry from '@sentry/react-native';
 import api from '../services/api'
 type User = {
   username: string;
