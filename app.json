@@ -3,7 +3,7 @@
     "name": "Lofy",
     "slug": "Lofy",
     "scheme": "myapp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -44,7 +44,7 @@
     "plugins": [
       "expo-font",
       "expo-router",
-      "@sentry/react-native",
+      // "@sentry/react-native",
       "@react-native-community/datetimepicker"
     ]
   }
