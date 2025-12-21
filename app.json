@@ -35,6 +35,9 @@
         "apiUrl": "process.env.EXPO_PUBLIC_API_URL"
       }
     },
+    "updates": {
+      "enabled": false
+    },
     "runtimeVersion": {
       "policy": "appVersion"
     },
