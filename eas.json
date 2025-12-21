@@ -19,12 +19,17 @@
     "apk": {
       "android": {
         "buildType": "apk"
+      },
+      "channel": "production",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://lofydemo-596188287284.asia-southeast1.run.app"
       }
     },
     "production": {
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "production"
     }
   },
   "submit": {

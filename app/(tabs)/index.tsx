@@ -106,8 +106,8 @@ const SearchAndFilterBar = ({
           placeholder={placeholder}
           style={styles.input}
           placeholderTextColor="#999"
-          returnKeyType="search"         // hiển thị nút Enter dạng "Search"
-          blurOnSubmit={true} // 👈 this will blur the input, which hides the keyboard
+          returnKeyType="search"
+          //blurOnSubmit={true} // 👈 this will blur the input, which hides the keyboard
           onSubmitEditing={e => {
             handleSubmit(e.nativeEvent.text);
             Keyboard.dismiss();
@@ -616,8 +616,6 @@ export default function ScrollableTabView() {
   const renderTabBar = (
     props: SceneRendererProps & { navigationState: NavigationState<Route> }
   ) => {
-    const inputRange = props.navigationState.routes.map((x, i) => i);
-
     return (
       <View style={styles.tabBarContainer}>
         <ScrollView
@@ -656,7 +654,7 @@ export default function ScrollableTabView() {
         renderTabBar={renderTabBar}
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
-        lazy // Chỉ render tab khi người dùng bấm vào (tối ưu hiệu năng)
+        lazy
       />
     </View>
   );
