@@ -52,24 +52,19 @@ export default function PostDetail() {
   const [isSubmitClaim, setSubmitClaim] = useState(true);
   const currentUserID = useUserStore(s => s.id);
   const [alias, setAlias] = useState<string | null>(null);
-
   async function fetchPost(postid: number): Promise<PostDetailType> {
+    if (!postid) throw new Error("Invalid post ID");
     const dataFetch = await api.get(`/post/get-post-details/${postid}`);
     return dataFetch as PostDetailType;
   }
 
-  const refreshPost = async () => {
-    await submitClaim();
-  };
 
   const loadPost = async () => {
     const response = await fetchPost(Number(postid));
     setPost(response);
-    if (response?.usr_id === currentUserID) {
-      setCreator(true);
-    } else {
-      setCreator(false);
-    }
+    const uid = response.usr_id;
+    setCreator(uid === currentUserID);
+    return uid;
   };
   const submitClaim = async () => {
     const res = await api.get(`/post/${postid}/claims/me`)
@@ -78,15 +73,26 @@ export default function PostDetail() {
     }
   }
 
-  const getInfo = async () => {
-    const res = await api.post('/user/infoById', { id: currentUserID }, {});
-    setAlias(res.alias);
+  const getInfo = async (uid: any) => {
+    if (!uid) throw new Error("Invalid post ID");
+    const res1 = await api.post('/user/infoById', { id: uid }, {});
+    setAlias(res1.alias);
   }
   useFocusEffect(
     useCallback(() => {
-      getInfo();
-      submitClaim();
-      loadPost().finally(() => setIsLoading(false));
+      const fetchData = async () => {
+        setIsLoading(true);
+        try {
+          const [_, uid] = await Promise.all([submitClaim(), loadPost()]);
+
+          await getInfo(uid);
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchData();
     }, [postid])
   );
 

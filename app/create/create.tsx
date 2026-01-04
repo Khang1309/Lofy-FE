@@ -10,7 +10,7 @@ import {
   Alert,
   Image,
   Modal,
-  FlatList
+  FlatList, Platform
 } from 'react-native';
 import { Stack, router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -162,6 +162,11 @@ export default function CreatePostPage() {
   };
 
   const handleSubmit = async () => {
+    if (!title.trim() || !building.trim() || !floor.trim() || !room.trim()) {
+      Alert.alert('Thiếu thông tin', 'Vui lòng điền đầy đủ các thông tin nhận dạng của món đồ.');
+      return;
+    }
+
     if (!imageUri) {
       Alert.alert('Thiếu hình ảnh', 'Vui lòng chọn ít nhất một hình ảnh.');
       return;
@@ -169,11 +174,6 @@ export default function CreatePostPage() {
 
     if (!date) {
       Alert.alert('Thiếu thời gian', 'Vui lòng chọn thời gian tìm thấy đồ.');
-      return;
-    }
-
-    if (!title.trim() || !building.trim() || !floor.trim() || !room.trim()) {
-      Alert.alert('Thiếu thông tin', 'Vui lòng điền đầy đủ các trường bắt buộc.');
       return;
     }
 
@@ -243,6 +243,7 @@ export default function CreatePostPage() {
         options={{
           headerTitle: 'Tạo bài đăng',
           headerBackVisible: true,
+          headerTitleAlign: 'center',
           headerBackTitle: 'Quay lại',
           headerTintColor: '#333',
           headerStyle: { backgroundColor: headerTheme.colors.primary },
@@ -251,7 +252,9 @@ export default function CreatePostPage() {
             fontSize: 20,
             fontWeight: "700",
             color: "#111827",
+
           },
+
         }}
       />
 
@@ -265,7 +268,7 @@ export default function CreatePostPage() {
           <Text style={styles.label}>Tiêu đề *</Text>
           <TextInput
             style={styles.input}
-            placeholder="Ví dụ: Nhặt được ví ở H1"
+            placeholder="Ghi tiêu đề. Ví dụ: Nhặt được ví ở H1"
             value={title}
             onChangeText={setTitle}
           />
@@ -276,22 +279,22 @@ export default function CreatePostPage() {
           <View style={[styles.fieldGroup, styles.rowItem]}>
             <Text style={styles.label}>Tòa nhà *</Text>
             <CustomPicker
-              label="Chọn tòa nhà"
+              label="Chọn tòa nhà gần nhất"
               value={building}
               items={BUILDINGS}
               onValueChange={setBuilding}
-              placeholder="Chọn tòa nhà"
+              placeholder="Chọn tòa gần nhất"
             />
           </View>
 
           <View style={[styles.fieldGroup, styles.rowItem]}>
             <Text style={styles.label}>Tầng *</Text>
             <CustomPicker
-              label="Chọn tầng"
+              label="Chọn tầng gần nhất"
               value={floor}
               items={FLOORS}
               onValueChange={setFloor}
-              placeholder="Chọn tầng"
+              placeholder="Chọn tầng gần nhất"
             />
           </View>
         </View>
@@ -300,7 +303,7 @@ export default function CreatePostPage() {
           <Text style={styles.label}>Gần phòng *</Text>
           <TextInput
             style={styles.input}
-            placeholder="VD: 101, 202..."
+            placeholder="Ghi phòng gần nhất. VD: 101, 202..."
             value={room}
             onChangeText={setRoom}
           />

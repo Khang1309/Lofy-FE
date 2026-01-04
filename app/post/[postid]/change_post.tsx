@@ -413,8 +413,8 @@ export default function EditPostPage() {
                         </TouchableOpacity>
                     </View>
                 </View>
-
-                {/* Submit button */}
+            </ScrollView>
+            <View style={styles.footer}>
                 <TouchableOpacity
                     style={[styles.submitButton, (isSubmitting || !isChange) && { opacity: 0.7 }]}
                     onPress={handleSubmit}
@@ -426,7 +426,9 @@ export default function EditPostPage() {
                         <Text style={styles.submitButtonText}>Sửa bài đăng</Text>
                     )}
                 </TouchableOpacity>
-            </ScrollView>
+            </View>
+            {/* Submit button */}
+
         </View>
     );
 }
@@ -508,7 +510,7 @@ const styles = StyleSheet.create({
         marginLeft: 6,
     },
     submitButton: {
-        marginBottom: 20,
+        marginTop: 'auto',
         backgroundColor: '#2563EB',
         paddingVertical: 14,
         borderRadius: 12,
@@ -562,5 +564,11 @@ const styles = StyleSheet.create({
     modalItemTextSelected: {
         color: '#2563EB',
         fontWeight: '600',
+    },
+    footer: {
+        padding: 20,
+        borderTopWidth: 1,
+        borderTopColor: '#E5E7EB',
+        backgroundColor: 'white',
     },
 });

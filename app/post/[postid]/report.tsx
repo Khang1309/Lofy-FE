@@ -97,7 +97,7 @@ export default function ReportScreen() {
           </View>
 
           {/* Section: Select Title/Reason */}
-          <Text style={styles.sectionTitle}>What is the problem?</Text>
+          <Text style={styles.sectionTitle}>Lý do bạn báo cáo là gì?</Text>
           <View style={styles.optionsContainer}>
             {REPORT_REASONS.map((reason) => (
               <TouchableOpacity

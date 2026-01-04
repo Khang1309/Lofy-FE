@@ -1,5 +1,5 @@
 import { Redirect, router } from 'expo-router';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -15,8 +15,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
     shouldShowBanner: true,
     shouldShowList: true,
-
-    shouldShowAlert: true,
   }),
 });
 
@@ -29,7 +27,6 @@ export default function StartPage() {
     try {
       let result = await SecureStore.getItemAsync(key);
       if (result) {
-        // Safety wrap for jwtDecode
         try {
           const decoded: any = jwtDecode(result);
           const exp = decoded.exp * 1000;
@@ -54,27 +51,47 @@ export default function StartPage() {
   // Helper: Get Push Token
   const registerPushToken = async () => {
     try {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') return;
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
 
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus !== 'granted') {
+        console.log('❌ Permission not granted for push notifications');
+        return;
+      }
       const projectId =
         Constants.easConfig?.projectId ??
         Constants.expoConfig?.extra?.eas?.projectId;
 
       if (!projectId) {
-        console.error("❌ EAS projectId missing");
+        console.error("❌ Project ID missing. Check app.json or eas.json");
         return;
       }
 
+      //Get the Token
       const tokenData = await Notifications.getExpoPushTokenAsync({
         projectId,
       });
 
-      console.log("✅ Android Expo Push Token:", tokenData.data);
+      console.log("✅ Push Token:", tokenData.data);
 
       await api.post('/user/device-token', {
         device_push_token: tokenData.data,
       }, {});
+
     } catch (err) {
       console.error("❌ Push token error:", err);
     }
@@ -124,7 +141,7 @@ export default function StartPage() {
         const userLoaded = await fetchUserData();
 
         if (userLoaded) {
-          registerPushToken();
+          await registerPushToken();
           setIsLoggedIn(true);
         } else {
           // Token was valid but API failed? Maybe token expired on server.

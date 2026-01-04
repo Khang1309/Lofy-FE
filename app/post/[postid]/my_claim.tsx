@@ -15,18 +15,19 @@ import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 import { headerTheme } from 'styles/theme'
+import { set } from 'zod';
 type Claim = {
     post_id: number,
     claim_description: string,
     contact_info: string,
 }
 
-export default function SubmitClaimScreen() {
+export default function ChangeClaimScreen() {
     const { postid } = useLocalSearchParams();
     const [description, setDescription] = useState('');
     const [contactInfo, setContactInfo] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
-
+    const [change, setChange] = useState(false);
     const getMyClaim = async (): Promise<Claim> => {
         const res = await api.get(`/post/${postid}/claims/me`)
         return res as Claim;
@@ -146,7 +147,7 @@ export default function SubmitClaimScreen() {
                             numberOfLines={6}
                             textAlignVertical="top"
                             value={description}
-                            onChangeText={setDescription}
+                            onChangeText={(text) => { setDescription(text); setChange(true); }}
                         />
                     </View>
 
@@ -157,7 +158,7 @@ export default function SubmitClaimScreen() {
                             placeholder="Số điện thoại, Zalo, Email..."
                             placeholderTextColor="#9ca3af"
                             value={contactInfo}
-                            onChangeText={setContactInfo}
+                            onChangeText={(text) => { setContactInfo(text); setChange(true); }}
                         />
 
                     </View>
@@ -167,11 +168,11 @@ export default function SubmitClaimScreen() {
                 {/* Footer Button */}
                 <View style={styles.footer}>
                     <TouchableOpacity
-                        style={[styles.submitBtn, isUpdating && styles.submitBtnDisabled]}
+                        style={[styles.submitBtn, (isUpdating || !change) && styles.submitBtnDisabled]}
                         onPress={handleUpdate}
-                        disabled={isUpdating}
+                        disabled={isUpdating || !change}
                     >
-                        {isUpdating ? (
+                        {(isUpdating) ? (
                             <ActivityIndicator color="#fff" />
                         ) : (
                             <Text style={styles.submitBtnText}>Cập nhật yêu cầu</Text>

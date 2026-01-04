@@ -211,11 +211,8 @@ const FollowThread = ({ threadId }: { threadId: number }) => {
     const willBeFollowedAfterToggle = useUserStore.getState().isThreadFollowed(threadId);
     try {
       if (willBeFollowedAfterToggle) {
-        console.log("Calling Follow API...");
         await api.post('/user/follows', { thread_id: threadId }, {});
       } else {
-        // Đang follow -> Gọi API Unfollow
-        console.log("Calling Unfollow API...");
         const payload = { thread_id: threadId }
         await api.delete('/user/unfollows',
           payload
@@ -223,7 +220,6 @@ const FollowThread = ({ threadId }: { threadId: number }) => {
       }
     } catch (error) {
       console.error("API Error, rolling back UI:", error);
-      // 2. Rollback: Nếu API lỗi, đảo ngược lại trạng thái để khớp với server
       toggleThreadFollow(threadId);
     }
   };
@@ -272,7 +268,6 @@ const STATUS_MAP: Record<string, { bg: string; color: string; text: string }> = 
 // Component Card Item
 const CardItem = ({ item }: { item: PostItem }) => {
   const s = item.status?.toLowerCase();
-  console.log(s);
   const statusStyle =
     STATUS_MAP[s ?? ''] ?? {
       bg: '#f3f4f6',

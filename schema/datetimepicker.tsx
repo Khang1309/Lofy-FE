@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
+import { set } from 'zod';
 
 interface CustomDateTimePickerProps {
     date: Date;
@@ -21,6 +22,7 @@ export default function CustomDateTimePicker({
     date,
     onDateChange,
     label,
+
 }: CustomDateTimePickerProps) {
     const [showModal, setShowModal] = useState(false);
     const [tempDate, setTempDate] = useState(date);
@@ -40,6 +42,15 @@ export default function CustomDateTimePicker({
             minute: '2-digit',
         });
     };
+
+    const handleDate = () => {
+        setMode('date');
+        setShowModal(true);
+    }
+    const handleTime = () => {
+        setMode('time');
+        setShowModal(true);
+    }
 
     const handleConfirm = () => {
         onDateChange(tempDate);
@@ -68,23 +79,24 @@ export default function CustomDateTimePicker({
 
     return (
         <>
-            <TouchableOpacity
+            <View
                 style={styles.input}
-                onPress={() => setShowModal(true)}
+            //onPress={() => setShowModal(true)}
             >
                 <View style={styles.dateDisplay}>
-                    <View style={styles.dateItem}>
+                    <TouchableOpacity style={styles.dateItem} onPress={handleDate}>
                         <Ionicons name="calendar-outline" size={20} color="#2563EB" />
                         <Text style={styles.dateText}>{formatDate(date)}</Text>
-                    </View>
+                        <Ionicons name="chevron-down" size={20} color="#9ca3af" />
+                    </TouchableOpacity>
                     <View style={styles.separator} />
-                    <View style={styles.dateItem}>
+                    <TouchableOpacity style={styles.dateItem} onPress={handleTime}>
                         <Ionicons name="time-outline" size={20} color="#2563EB" />
                         <Text style={styles.dateText}>{formatTime(date)}</Text>
-                    </View>
+                        <Ionicons name="chevron-down" size={20} color="#9ca3af" />
+                    </TouchableOpacity>
                 </View>
-                <Ionicons name="chevron-down" size={20} color="#9ca3af" />
-            </TouchableOpacity>
+            </View>
 
             {Platform.OS === 'ios' ? (
                 // iOS Modal with custom UI
@@ -208,10 +220,12 @@ const styles = StyleSheet.create({
     dateDisplay: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-around',
         flex: 1,
     },
     dateItem: {
         flexDirection: 'row',
+
         alignItems: 'center',
         gap: 10,
     },
