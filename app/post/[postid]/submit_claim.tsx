@@ -16,6 +16,7 @@ import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api'; // Đảm bảo đường dẫn này đúng với cấu trúc của bạn
 import * as Sentry from "@sentry/react-native";
+import { Analytics } from '@/app/services/utils';
 
 export default function SubmitClaimScreen() {
   const { postid } = useLocalSearchParams();
@@ -61,10 +62,19 @@ export default function SubmitClaimScreen() {
           },
         ]
       );
+
+      await Analytics.logEvent('claim_submitted', {
+        post_id: postid,
+        item_category: payload.claim_description,
+        success: true
+      });
     } catch (error: any) {
       console.error(error);
       const message = error.message || 'Có lỗi xảy ra khi gửi yêu cầu.';
       Sentry.captureException(error)
+      await Analytics.logEvent('claim_failed', {
+        error_msg: error.message
+      });
       Alert.alert('Lỗi', message);
     } finally {
       setIsSubmitting(false);

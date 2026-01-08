@@ -19,7 +19,7 @@ import api from '../services/api'
 import useUserStore from '../../store/useUserStore';
 import { statusColor, headerTheme } from '@/styles/theme';
 import * as Sentry from "@sentry/react-native";
-import { logUserAction } from '../services/utils';
+import { logUserAction, Analytics } from '../services/utils';
 
 
 type Route = {
@@ -277,7 +277,11 @@ const CardItem = ({ item }: { item: PostItem }) => {
       text: 'Không xác định',
     };
 
-  const handlePress = () => {
+  const handlePress = async (id: number) => {
+    await Analytics.logEvent('view_post', {
+      post_id: id,
+      success: true
+    });
     router.push(`/post/${item.id}`);
   };
 
@@ -287,7 +291,11 @@ const CardItem = ({ item }: { item: PostItem }) => {
       : 'https://via.placeholder.com/150';
 
   return (
-    <TouchableOpacity style={styles.cartItem} onPress={() => { logUserAction('post', 'User click on Post', { postID: item.id }); handlePress() }} activeOpacity={0.7}>
+    <TouchableOpacity style={styles.cartItem} onPress={() => {
+
+      logUserAction('post', 'User click on Post', { postID: item.id });
+      handlePress(item.id)
+    }} activeOpacity={0.7}>
       <Image source={{ uri: imageUri }} style={styles.cardImage} resizeMode="cover" />
 
       <View style={styles.cardContent}>

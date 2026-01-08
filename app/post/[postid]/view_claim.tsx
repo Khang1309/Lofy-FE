@@ -14,6 +14,7 @@ import api from '../../services/api'; // Hãy kiểm tra lại đường dẫn i
 import { headerTheme } from 'styles/theme'
 import * as Sentry from "@sentry/react-native";
 import { useFocusEffect } from '@react-navigation/native';
+import { Analytics } from '@/app/services/utils';
 
 // Định nghĩa kiểu dữ liệu Claim
 interface Claim {
@@ -200,7 +201,11 @@ export default function ClaimsScreen() {
       Alert.alert('Thành công', `Đã ${decision === 'accepted' ? 'chấp nhận' : 'từ chối'} yêu cầu.`);
 
       await fetchClaims();
-
+      await Analytics.logEvent('claim_submitted', {
+        post_id: postid,
+        item_category: 'wallet', // or pass dynamic category
+        success: true
+      });
     } catch (err: any) {
       Alert.alert('Thất bại', err.message || 'Có lỗi xảy ra khi xử lý yêu cầu.');
       Sentry.captureException(err)

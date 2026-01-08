@@ -27,15 +27,23 @@ export const useNotificationStore = create<NotificationState>()(
 
             fetchNotifications: async (page, number) => {
                 try {
-                    const res = await api.get(`/others/notifications?page=${page || 1}&number=${number || 10}`);
+                    const pageNum = page || 1; // Explicitly get the page number
+                    const limitNum = number || 10;
+                    const res = await api.get(`/others/notifications?page=${pageNum}&number=${limitNum}`);
                     console.log(res)
                     const validatedData = NotificationListSchema.parse(res);
-                    const currentList = get().ListNotifications ?? [];
                     const incomingList = validatedData ?? [];
-                    const combined = [...currentList, ...incomingList];
+                    let finalAPIList = [];
 
-                    const uniqueNotifications = Array.from( //map de tranh bi trung id cua notification
-                        new Map(combined.map(item => [item.id, item])).values()
+                    if (pageNum === 1) {
+                        finalAPIList = incomingList;
+                    } else {
+                        const currentList = get().ListNotifications ?? [];
+                        finalAPIList = [...currentList, ...incomingList];
+                    }
+
+                    const uniqueNotifications = Array.from(
+                        new Map(finalAPIList.map(item => [item.id, item])).values()
                     );
                     get().setNotifications(uniqueNotifications);
 

@@ -19,7 +19,7 @@ import { headerTheme } from 'styles/theme'
 import CustomDateTimePicker from '../../schema/datetimepicker';
 import api from '../services/api';
 import * as Sentry from "@sentry/react-native";
-import { logUserAction } from '../services/utils';
+import { Analytics } from '../services/utils';
 
 const buildingMap: Record<string, number> = {
   h1: 1,
@@ -226,6 +226,9 @@ export default function CreatePostPage() {
           },
         },
       ]);
+      await Analytics.logEvent('create_post', {
+        success: true
+      });
     } catch (err: any) {
       console.error('Create post error:', err);
       Alert.alert(

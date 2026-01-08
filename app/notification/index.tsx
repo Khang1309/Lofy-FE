@@ -48,6 +48,7 @@ export default function Notifications() {
   useFocusEffect(
     useCallback(() => {
       fetchNotifications()
+      console.log("aaa", notifications);
     }, [])
   )
 
