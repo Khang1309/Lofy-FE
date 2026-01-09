@@ -20,7 +20,7 @@ export default {
     userInterfaceStyle: "light",
     newArchEnabled: true,
     splash: {
-      image: "./assets/splash-icon.png",
+      image: "./assets/icon.png",
       resizeMode: "contain",
       backgroundColor: "#ffffff"
     },
@@ -31,7 +31,7 @@ export default {
     android: {
       package: "com.yourname.lofy",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
       },
       // 3. POINT TO THE FILE (It exists now because we created it above)
