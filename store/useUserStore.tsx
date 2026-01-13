@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,7 +7,7 @@ type UserStore = {
   id: number,
   alias: string;
   role: 'user' | 'admin';
-  followedThreadIds: number[];              // 🔹 chỉ lưu danh sách thread_id
+  followedThreadIds: number[];
   setAlias: (alias: string) => void;
   setID: (id: number) => void;
   setRole: (role: 'user' | 'admin') => void;

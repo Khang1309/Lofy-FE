@@ -135,7 +135,6 @@ export default function LoginScreen() {
       setIsLoading(false);
       console.error('Login error:', error);
       setErrorMessage(error.message || 'Mã OTP không chính xác hoặc đã hết hạn.');
-      Sentry.captureException(error)
     }
   };
 

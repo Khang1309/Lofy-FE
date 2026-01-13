@@ -9,6 +9,7 @@ import useUserStore from '../store/useUserStore';
 import api from './services/api';
 import Constants from 'expo-constants';
 import * as Sentry from "@sentry/react-native";
+import { Analytics } from './services/utils';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -124,6 +125,7 @@ export default function StartPage() {
       return true;
     } catch (err) {
       console.error("Error fetching user details:", err);
+      Sentry.captureException(err);
       return false;
     }
   }
@@ -143,14 +145,17 @@ export default function StartPage() {
         const userLoaded = await fetchUserData();
 
         if (userLoaded) {
+
           await registerPushToken();
           setIsLoggedIn(true);
+          Analytics.logEvent("User login success")
         } else {
-          // Token was valid but API failed? Maybe token expired on server.
           setIsLoggedIn(false);
+          Analytics.logEvent("User login failed: Can found user data")
         }
       } else {
         setIsLoggedIn(false);
+        Analytics.logEvent("User login failed: Token expired")
       }
 
       // 4. Finally stop loading

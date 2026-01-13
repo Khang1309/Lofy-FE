@@ -27,7 +27,7 @@ export const useNotificationStore = create<NotificationState>()(
 
             fetchNotifications: async (page, number) => {
                 try {
-                    const pageNum = page || 1; // Explicitly get the page number
+                    const pageNum = page || 1;
                     const limitNum = number || 10;
                     const res = await api.get(`/others/notifications?page=${pageNum}&number=${limitNum}`);
                     console.log(res)
@@ -54,7 +54,7 @@ export const useNotificationStore = create<NotificationState>()(
 
             markAsRead: async (id) => {
                 try {
-                    const res = await api.patch(`/others/notifications?noti_id=${id}`, {}, {});
+                    await api.patch(`/others/notifications?noti_id=${id}`, {}, {});
                 }
                 catch (error) {
                     console.error("Failed to mark notification as read:", error);
