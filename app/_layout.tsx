@@ -24,33 +24,33 @@ Sentry.init({
 
 function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <Stack>
-        {/* Auth flow */}
-        <Stack.Screen name="auth" options={{ headerShown: false }} />
 
-        {/* Tabs (no header, you control header there) */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <Stack>
+      {/* Auth flow */}
+      <Stack.Screen name="auth" options={{ headerShown: false }} />
 
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+      {/* Tabs (no header, you control header there) */}
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-        {/* Notification: has its own header + BACK automatically */}
-        <Stack.Screen
-          name="notification/index"
-          options={{
-            title: 'Thông báo',
-            headerShown: true,
-            headerBackTitle: 'Quay lại',
-          }}
-        />
+      <Stack.Screen name="index" options={{ headerShown: false }} />
 
-        <Stack.Screen name="post/[postid]" options={{ title: 'Chi tiết bài viết', headerBackTitle: 'Quay lại', }}
+      {/* Notification: has its own header + BACK automatically */}
+      <Stack.Screen
+        name="notification/index"
+        options={{
+          title: 'Thông báo',
+          headerShown: true,
+          headerBackTitle: 'Quay lại',
+        }}
+      />
 
-        />
-        <Stack.Screen name="create/create" options={{ title: 'Tạo bài đăng', headerBackTitle: 'Quay lại', }}
-        />
-      </Stack>
-    </SafeAreaProvider>
+      <Stack.Screen name="post/[postid]" options={{ title: 'Chi tiết bài viết', headerBackTitle: 'Quay lại', }}
+
+      />
+      <Stack.Screen name="create/create" options={{ title: 'Tạo bài đăng', headerBackTitle: 'Quay lại', }}
+      />
+    </Stack>
+
   );
 };
 

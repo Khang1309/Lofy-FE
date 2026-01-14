@@ -16,6 +16,9 @@ import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 import * as Sentry from "@sentry/react-native";
 
+import { headerTheme } from '@/styles/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 // Danh sách các lý do báo cáo có sẵn
 const REPORT_REASONS = [
   'Spam hoặc scam',
@@ -31,6 +34,8 @@ export default function ReportScreen() {
   const [customTitle, setCustomTitle] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const insets = useSafeAreaInsets();
 
   const handleSubmit = async () => {
     // 1. Xác định Title cuối cùng
@@ -79,9 +84,17 @@ export default function ReportScreen() {
     <View style={styles.container}>
       <Stack.Screen
         options={{
-          headerTitle: 'Report Post',
-          //headerBackTitleVisible: false,
+          headerTitle: 'Báo cáo bài đăng',
+          headerBackVisible: true,
+          headerBackTitle: 'Quay lại',
           headerTintColor: '#333',
+          headerStyle: { backgroundColor: headerTheme.colors.primary },
+          headerTitleStyle: {
+            fontFamily: "Inter-Bold",
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#111827",
+          },
         }}
       />
 
@@ -158,7 +171,7 @@ export default function ReportScreen() {
         </ScrollView>
 
         {/* Footer */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
           <TouchableOpacity
             style={[styles.submitBtn, isSubmitting && styles.submitBtnDisabled]}
             onPress={handleSubmit}
@@ -260,7 +273,9 @@ const styles = StyleSheet.create({
     paddingTop: 12,
   },
   footer: {
-    padding: 20,
+    bottom: 0,
+    paddingTop: 16,     // Keep top padding
+    paddingHorizontal: 16, // Keep side padding
     borderTopWidth: 1,
     borderTopColor: '#f3f4f6',
     backgroundColor: '#fff',

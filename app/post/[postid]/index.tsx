@@ -18,6 +18,8 @@ import useUserStore from '@/store/useUserStore';
 import { useFocusEffect } from "@react-navigation/native";
 import * as Sentry from "@sentry/react-native";
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 type PostDetailType = {
   id: number;
   title: string;
@@ -42,8 +44,10 @@ function formatDate(date: Date): string {
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
+
 export default function PostDetail() {
   // 1. Lấy ID từ URL
+  const insets = useSafeAreaInsets()
   const { postid } = useLocalSearchParams();
   const [post, setPost] = useState<PostDetailType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -296,7 +300,7 @@ export default function PostDetail() {
 
       {/* 6. BOTTOM ACTION BAR (Sticky Footer) */}
       {isPostCreator ? (
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
           <TouchableOpacity style={[styles.secondaryBtn, post.post_status != "OPEN" ? { opacity: 0.5 } : null]} onPress={handleDelete} disabled={post.post_status != "OPEN"}>
             <Text style={styles.secondaryBtnText}>Gỡ bỏ</Text>
           </TouchableOpacity>
@@ -315,7 +319,7 @@ export default function PostDetail() {
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
           {role !== 'admin' ? null : (
             <TouchableOpacity style={[styles.secondaryBtn, post.post_status != "OPEN" ? { opacity: 0.5 } : null]} onPress={handleDelete} disabled={post.post_status != "OPEN"}>
               <Text style={styles.secondaryBtnText}>Gỡ bỏ</Text>
@@ -503,7 +507,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#fff',
-    padding: 16,
+    //padding: 16,
+    paddingTop: 16,     // Keep top padding
+    paddingHorizontal: 16, // Keep side padding
     borderTopWidth: 1,
     borderTopColor: '#f3f4f6',
     flexDirection: 'row',

@@ -20,6 +20,8 @@ import { headerTheme } from 'styles/theme'
 import CustomDateTimePicker from 'schema/datetimepicker';
 import api from '../../services/api';
 import * as Sentry from "@sentry/react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 const buildingMap: Record<string, number> = {
     h1: 1,
     h2: 2,
@@ -172,6 +174,8 @@ export default function EditPostPage() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isChange, setIsChange] = useState(false);
+
+    const insets = useSafeAreaInsets()
 
     const handlePickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -415,7 +419,7 @@ export default function EditPostPage() {
                     </View>
                 </View>
             </ScrollView>
-            <View style={styles.footer}>
+            <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
                 <TouchableOpacity
                     style={[styles.submitButton, (isSubmitting || !isChange) && { opacity: 0.7 }]}
                     onPress={handleSubmit}
@@ -567,7 +571,9 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     footer: {
-        padding: 20,
+        bottom: 0,
+        paddingTop: 16,     // Keep top padding
+        paddingHorizontal: 16, // Keep side padding
         borderTopWidth: 1,
         borderTopColor: '#E5E7EB',
         backgroundColor: 'white',

@@ -15,7 +15,7 @@ import { useLocalSearchParams, router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 import { headerTheme } from 'styles/theme'
-import { set } from 'zod';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 type Claim = {
     post_id: number,
     claim_description: string,
@@ -33,7 +33,7 @@ export default function ChangeClaimScreen() {
         const res = await api.get(`/post/${postid}/claims/me`)
         return res as Claim;
     }
-
+    const insets = useSafeAreaInsets();
     useEffect(() => {
         const fetchClaim = async () => {
             try {
@@ -169,7 +169,7 @@ export default function ChangeClaimScreen() {
                 </ScrollView>
 
                 {/* Footer Button */}
-                <View style={styles.footer}>
+                <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
                     <TouchableOpacity
                         style={[styles.submitBtn, (isUpdating || !change) && styles.submitBtnDisabled]}
                         onPress={handleUpdate}
@@ -244,7 +244,9 @@ const styles = StyleSheet.create({
 
     // Footer
     footer: {
-        padding: 20,
+        paddingTop: 16,     // Keep top padding
+        paddingHorizontal: 16, // Keep side padding
+        bottom: 0,
         borderTopWidth: 1,
         borderTopColor: '#f3f4f6',
         backgroundColor: '#fff',

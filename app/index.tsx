@@ -133,7 +133,8 @@ export default function StartPage() {
   useEffect(() => {
     const bootstrapAsync = async () => {
       const hasSeenWelcome = await AsyncStorage.getItem('hasSeenWelcome');
-      const token = await getTokenSecureStorage('auth_token');
+      const token = await SecureStore.getItemAsync('auth_token');
+      console.log(token + "123");
 
       if (!hasSeenWelcome || hasSeenWelcome == 'false') {
         router.replace('/auth/welcome');
@@ -148,14 +149,14 @@ export default function StartPage() {
 
           await registerPushToken();
           setIsLoggedIn(true);
-          Analytics.logEvent("User login success")
+          Analytics.logEvent("User_login_success")
         } else {
           setIsLoggedIn(false);
-          Analytics.logEvent("User login failed: Can found user data")
+          Analytics.logEvent("User_login_failed_Can_not_found_user_data")
         }
       } else {
         setIsLoggedIn(false);
-        Analytics.logEvent("User login failed: Token expired")
+        Analytics.logEvent("User_login_failed:_Token_expired")
       }
 
       // 4. Finally stop loading

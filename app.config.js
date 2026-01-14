@@ -53,7 +53,8 @@ export default {
     },
     plugins: [
       "expo-router",
-      "@sentry/react-native"
+      "@sentry/react-native",
+
     ]
   }
 };

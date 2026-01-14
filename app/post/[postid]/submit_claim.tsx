@@ -17,12 +17,17 @@ import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api'; // Đảm bảo đường dẫn này đúng với cấu trúc của bạn
 import * as Sentry from "@sentry/react-native";
 import { Analytics } from '@/app/services/utils';
+import { headerTheme } from '@/styles/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function SubmitClaimScreen() {
   const { postid } = useLocalSearchParams();
   const [description, setDescription] = useState('');
   const [contactInfo, setContactInfo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+  const insets = useSafeAreaInsets();
 
   // Xử lý logic gửi yêu cầu
   const handleSubmit = async () => {
@@ -86,9 +91,17 @@ export default function SubmitClaimScreen() {
       {/* Config Header */}
       <Stack.Screen
         options={{
-          headerTitle: 'Gửi yêu cầu nhận đồ',
-          //headerBackTitleVisible: false,
+          headerTitle: 'Gửi yêu cầu nhận',
+          headerBackVisible: true,
+          headerBackTitle: 'Quay lại',
           headerTintColor: '#333',
+          headerStyle: { backgroundColor: headerTheme.colors.primary },
+          headerTitleStyle: {
+            fontFamily: "Inter-Bold",
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#111827",
+          },
         }}
       />
 
@@ -144,7 +157,7 @@ export default function SubmitClaimScreen() {
         </ScrollView>
 
         {/* Footer Button */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
           <TouchableOpacity
             style={[styles.submitBtn, isSubmitting && styles.submitBtnDisabled]}
             onPress={handleSubmit}
@@ -219,7 +232,9 @@ const styles = StyleSheet.create({
 
   // Footer
   footer: {
-    padding: 20,
+    bottom: 0,
+    paddingTop: 16,     // Keep top padding
+    paddingHorizontal: 16, // Keep side padding
     borderTopWidth: 1,
     borderTopColor: '#f3f4f6',
     backgroundColor: '#fff',

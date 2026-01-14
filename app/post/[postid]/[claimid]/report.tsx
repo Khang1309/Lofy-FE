@@ -18,6 +18,7 @@ import api from '../../../services/api';
 import { headerTheme } from 'styles/theme'
 import * as Sentry from "@sentry/react-native";
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // Danh sách các lý do báo cáo có sẵn
 const REPORT_REASONS = [
     'Spam hoặc scam',
@@ -34,6 +35,8 @@ export default function ReportScreenClaim() {
     const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [reported, setReported] = useState(false);
+
+    const insets = useSafeAreaInsets();
     const handleSubmit = async () => {
         // 1. Xác định Title cuối cùng
         const finalTitle = selectedReason === 'Khác' ? customTitle.trim() : selectedReason;
@@ -169,7 +172,7 @@ export default function ReportScreenClaim() {
                 </ScrollView>
 
                 {/* Footer */}
-                <View style={styles.footer}>
+                <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) }]}>
                     <TouchableOpacity
                         style={[styles.submitBtn, isSubmitting && styles.submitBtnDisabled]}
                         onPress={handleSubmit}
@@ -271,7 +274,9 @@ const styles = StyleSheet.create({
         paddingTop: 12,
     },
     footer: {
-        padding: 20,
+        paddingTop: 16,     // Keep top padding
+        paddingHorizontal: 16, // Keep side padding
+        bottom: 0,
         borderTopWidth: 1,
         borderTopColor: '#f3f4f6',
         backgroundColor: '#fff',
