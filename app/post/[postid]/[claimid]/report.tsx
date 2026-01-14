@@ -60,9 +60,7 @@ export default function ReportScreenClaim() {
                 claim_id: claimIdStr
             };
 
-            // 3. Gọi API gửi báo cáo
-            // Endpoint giả định: POST /posts/{id}/report
-            await api.post(`/others/report/send-report`, payload, {});
+            await api.post(`/others/report`, payload, {});
 
             Alert.alert(
                 'Báo cáo đã gửi thành công',

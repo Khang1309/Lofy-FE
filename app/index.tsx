@@ -25,7 +25,7 @@ export default function StartPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Helper: Get Token safely
-  const getTokenSecureStorage = async (key: any) => {
+  const getTokenSecureStorage = async (key: string) => {
     try {
       let result = await SecureStore.getItemAsync(key);
       if (result) {
@@ -132,11 +132,12 @@ export default function StartPage() {
 
   useEffect(() => {
     const bootstrapAsync = async () => {
+      setIsLoading(true);
       const hasSeenWelcome = await AsyncStorage.getItem('hasSeenWelcome');
-      const token = await SecureStore.getItemAsync('auth_token');
+      const token = await getTokenSecureStorage('auth_token');
       console.log(token + "123");
 
-      if (!hasSeenWelcome || hasSeenWelcome == 'false') {
+      if ((!hasSeenWelcome || hasSeenWelcome == 'false') && !token) {
         router.replace('/auth/welcome');
         return;
       }
@@ -144,9 +145,7 @@ export default function StartPage() {
       if (token) {
         console.log("Token valid, fetching user data...");
         const userLoaded = await fetchUserData();
-
         if (userLoaded) {
-
           await registerPushToken();
           setIsLoggedIn(true);
           Analytics.logEvent("User_login_success")
