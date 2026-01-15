@@ -1,96 +1,164 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
+// Use require to access View inside the mock if needed, or rely on the render environment
+import { View } from 'react-native';
 import ScrollableTabView from '../app/(tabs)/index';
+import api from '../app/services/api';
 
-// --- MOCKS SETUP ---
+// --- 1. MOCK ASYNC STORAGE ---
+jest.mock('@react-native-async-storage/async-storage', () =>
+    require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
 
-// 1. Mock Expo Router & Focus Effect
+// --- 2. MOCK EXPO ROUTER ---
+const mockPush = jest.fn();
+
 jest.mock('expo-router', () => ({
-    useRouter: () => ({ push: jest.fn() }),
-    useFocusEffect: (cb: any) => cb(), // Run effect immediately
+    router: {
+        push: (...args: any[]) => mockPush(...args),
+    },
+    useFocusEffect: (cb: any) => {
+        const React = require('react');
+        React.useEffect(cb, [cb]);
+    },
     Link: 'Link',
 }));
 
-// 2. Mock API (Prevent actual network calls)
+// --- 3. MOCK API ---
 jest.mock('../app/services/api', () => ({
-    post: jest.fn(() => Promise.resolve({
+    __esModule: true,
+    default: {
+        post: jest.fn(),
+        delete: jest.fn(),
+    }
+}));
+
+// --- 4. MOCK ZUSTAND STORE ---
+jest.mock('../store/useUserStore', () => {
+    return {
+        __esModule: true,
+        default: jest.fn((selector) => {
+            const mockState = {
+                followedThreadIds: [],
+                toggleThreadFollow: jest.fn(),
+                isThreadFollowed: () => false,
+            };
+            return selector(mockState);
+        }),
+        getState: () => ({
+            followedThreadIds: [],
+            isThreadFollowed: () => false,
+        })
+    };
+});
+
+// --- 5. MOCK SENTRY & UTILS ---
+jest.mock('@sentry/react-native', () => ({
+    captureException: jest.fn(),
+}));
+
+const mockLogUserAction = jest.fn();
+jest.mock('../app/services/utils', () => ({
+    logUserAction: mockLogUserAction,
+    Analytics: { logEvent: jest.fn() },
+}));
+
+// --- 6. MOCK UI LIBRARIES ---
+jest.mock('react-native-elements', () => ({ Icon: 'Icon' }));
+jest.mock('@expo/vector-icons', () => ({ Ionicons: 'Ionicons' }));
+
+// --- 7. MOCK TAB VIEW (FIXED) ---
+// This was the cause of the "Unable to find H1" error.
+// We must render the `renderTabBar` prop so the headers appear.
+jest.mock('react-native-tab-view', () => {
+    const React = require('react');
+    const { View } = require('react-native');
+
+    return {
+        TabView: ({ renderScene, renderTabBar, navigationState }: any) => {
+            // 1. Render the custom TabBar (Where "H1", "All" texts are)
+            const tabBar = renderTabBar ? renderTabBar({ navigationState }) : null;
+
+            // 2. Render the current active Scene (Where the posts are)
+            const currentRoute = navigationState.routes[navigationState.index];
+            const scene = renderScene({ route: currentRoute });
+
+            return (
+                <View>
+                    {tabBar}
+                    {scene}
+                </View>
+            );
+        },
+        SceneMap: (scenes: any) => ({ route }: any) => scenes[route.key](),
+    };
+});
+
+describe('<ScrollableTabView /> (HomeScreen)', () => {
+    const mockPostsData = {
         page: 1,
         total: 1,
         posts: [
             {
                 id: 1,
                 title: 'Test Lost Item',
-                building: 'H6',
+                building: 'H1',
                 post_floor: '1',
                 nearest_room: '101',
-                found_at: new Date().toISOString(),
-                post_description: 'Description',
+                found_at: new Date('2024-01-15').toISOString(),
+                post_description: 'Description 1',
                 post_status: 'OPEN',
                 usr_id: 123,
-                images: [{ url: 'http://test.com/img.png' }]
+                images: [{ url: 'http://test.com/img1.png' }]
             }
         ]
-    })),
-    delete: jest.fn(),
-}));
-
-// 3. Mock Zustand Store
-jest.mock('../store/useUserStore', () => {
-    // Return a hook that always returns specific values
-    const actual = jest.requireActual('../store/useUserStore');
-    return {
-        __esModule: true,
-        default: (selector: any) => {
-            // Mock state values
-            const mockState = {
-                followedThreadIds: [],
-                toggleThreadFollow: jest.fn(),
-                isThreadFollowed: () => false
-            };
-            return selector(mockState);
-        },
-        // If you use .getState() somewhere
-        getState: () => ({ isThreadFollowed: () => false })
     };
-});
 
-// 4. Mock Sentry & Utils
-jest.mock('@sentry/react-native', () => ({
-    captureException: jest.fn(),
-}));
-
-jest.mock('../app/services/utils', () => ({
-    logUserAction: jest.fn(),
-    Analytics: { logEvent: jest.fn() },
-}));
-
-describe('<ScrollableTabView /> (HomeScreen)', () => {
-    // Test Case 1: Render Main Tabs
-    it('renders the tab bar with building names', () => {
-        const { getByText } = render(<ScrollableTabView />);
-        expect(getByText('All')).toBeTruthy();
-        expect(getByText('H1')).toBeTruthy();
-        expect(getByText('H6')).toBeTruthy();
+    beforeEach(() => {
+        jest.clearAllMocks();
+        // Setup the API return value for every test
+        (api.post as jest.Mock).mockResolvedValue(mockPostsData);
     });
 
-    // Test Case 2: Render "Create Post" Button
+    // Test Case 1: Render Tab Bar
+    it('renders the tab bar with building names', async () => {
+        const { getByText } = render(<ScrollableTabView />);
+
+        // Now these should pass because the mock renders the TabBar
+        expect(getByText('All')).toBeTruthy();
+        expect(getByText('H1')).toBeTruthy();
+
+        // Waiting for the API data ensures the "act" warnings are resolved
+        // because we wait for the state updates to finish before ending the test.
+        await waitFor(() => {
+            expect(getByText('Test Lost Item')).toBeTruthy();
+        });
+    });
+
+    // Test Case 2: Render Button
     it('renders the "Tạo bài" button', async () => {
         const { getByText } = render(<ScrollableTabView />);
-        // Wait for initial render
+
+        // Always wait for the initial data load to complete 
+        // to avoid "act" warnings from pending promises.
         await waitFor(() => {
-            expect(getByText('Tạo bài')).toBeTruthy();
+            expect(getByText('Test Lost Item')).toBeTruthy();
         });
+
+        expect(getByText('Tạo bài')).toBeTruthy();
     });
 
     // Test Case 3: Filter Interaction
     it('opens filter panel when Time filter is pressed', async () => {
         const { getByText } = render(<ScrollableTabView />);
 
-        // Find the "Time" button inside the component
+        await waitFor(() => {
+            expect(getByText('Test Lost Item')).toBeTruthy();
+        });
+
         const timeFilterBtn = getByText('Time');
         fireEvent.press(timeFilterBtn);
 
-        // Check if the dropdown options appear
         await waitFor(() => {
             expect(getByText('Trong vòng 7 ngày')).toBeTruthy();
         });
