@@ -1,0 +1,59 @@
+name: Test and SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test_and_analyze:
+    name: Run Tests & SonarCloud
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code về máy ảo (fetch-depth: 0 là bắt buộc cho SonarCloud)
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Cài đặt môi trường Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "npm"
+
+      # 3. Cài đặt các thư viện (dùng npm ci nhanh hơn npm install)
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      # 4. Chạy Test (lệnh này sẽ tạo ra file coverage và test-report.html)
+      - name: Run Tests with Coverage
+        run: npm run test:ci
+
+      # 5. Upload file báo cáo HTML (Yêu cầu của bài tập: Artifact test-report)
+      - name: Upload Test Report Artifact
+        if: always() # Luôn chạy dù test có fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report.html
+
+      # 6. Upload Coverage Report (Để bạn xem chi tiết nếu cần)
+      - name: Upload Coverage Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov-report
+
+      # 7. Quét SonarCloud (Gửi kết quả lên Dashboard)
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token có sẵn của GitHub
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Token bạn đã cài trong Settings
