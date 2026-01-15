@@ -30,6 +30,8 @@ jobs:
       # 3. Cài đặt các thư viện (dùng npm ci nhanh hơn npm install)
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
+        env:
+          NODE_ENV: test
 
       # 4. Chạy Test (lệnh này sẽ tạo ra file coverage và test-report.html)
       - name: Run Tests with Coverage
@@ -50,6 +52,9 @@ jobs:
         with:
           name: coverage-report
           path: coverage/lcov-report
+          args: >
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sources=app
 
       # 7. Quét SonarCloud (Gửi kết quả lên Dashboard)
       - name: SonarCloud Scan
