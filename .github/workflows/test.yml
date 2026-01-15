@@ -53,7 +53,7 @@ jobs:
 
       # 7. Quét SonarCloud (Gửi kết quả lên Dashboard)
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@ba3875ecf642b2129de2b589510c81a8b53dbf4e
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token có sẵn của GitHub
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # Token bạn đã cài trong Settings
