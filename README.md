@@ -1,13 +1,16 @@
 # Lofy-FE
+## NOTE:
+This project calls API directly to the server host on Google Cloud Platform. But the server is free so we can only host for about 1 month (since January), so now the Frontend will look very empty when you clone and run the code. You can find the GitHub link to the Backend here: ```https://github.com/ntkh4nq/lofy.git```
+
 
 ## Overview
-Lofy-FE is a web application designed to provide users with an engaging platform for managing and enjoying music content. It allows users to create, share, and interact with playlists while enjoying a seamless musical experience.
+Lofy-FE is a mobile application designed to provide student at HCMUT with an engaging platform for finding their lost items. It allows users to create, submit, and interact with each post.
 
 ## Tech Stack
-- **Frontend:** React.js, Redux
-- **Styling:** CSS, Sass
+- **Frontend:** React Native, Zustand
+- **Styling:** CSS, TailwindCSS
 - **APIs:** RESTful APIs
-- **Build Tool:** Webpack
+- **Build Tool:** Expo
 - **Testing:** Jest, React Testing Library
 
 ## Setup Instructions
@@ -36,11 +39,14 @@ Lofy-FE is a web application designed to provide users with an engaging platform
 ```
 Lofy-FE/
 ├── public/          # Static files
-├── src/             # Source files
-│   ├── components/  # Reusable components
-│   ├── pages/       # Page components
+├── app/             # Source files
+│   ├── (tabs)/      # Reusable components
+│   ├── auth/        # Page for log in
+│   ├── create/      # Page for creation of posts
+│   ├── notification/# Page for all notification list
+│   ├── post/        # Page for viewing the details of the post abd claims inside that post
+│   ├── report/      # Page to report the post
 │   ├── services/    # Services to handle API calls
-│   ├── redux/       # Redux store, actions, and reducers
 │   └── App.js       # Main application file
 ├── package.json     # Project metadata and dependencies
 └── README.md        # Project documentation
@@ -48,15 +54,9 @@ Lofy-FE/
 
 ## Key Features
 - User authentication and authorization
-- Playlist creation and sharing
-- Search functionality for songs and artists
+- Post creation and deletion
+- Search functionality for posts
 - Responsive design and accessibility features
 
-## Contribution Guidelines
-1. Fork the repository.
-2. Create your feature branch (`git checkout -b feature/YourFeature`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/YourFeature`).
-5. Open a pull request.
 
-### Please ensure that your code adheres to the project's coding standards and includes tests where necessary.
+
